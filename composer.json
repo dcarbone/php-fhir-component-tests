@@ -1,0 +1,31 @@
+{
+    "name": "php-fhir/component-tests",
+    "description": "Test suites for php-fhir-resources, php-fhir-elements, and php-fhir-common",
+    "type": "library",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/dcarbone/php-fhir-component-tests",
+    "authors": [
+        {
+            "name": "Daniel Carbone",
+            "email": "daniel.p.carbone@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "phpunit/phpunit": "4.6.*",
+        "symfony/console": "2.6.*",
+        "symfony/finder": "2.6.*",
+        "phpdocumentor/reflection-docblock": "2.0.4",
+        "dcarbone/file-object-plus": "0.1.*"
+    },
+    "require-dev": {
+        "php-fhir/common": "*",
+        "php-fhir/resources": "*",
+        "php-fhir/elements": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "FHIR\\ComponentTests\\": "src/"
+        }
+    }
+}
