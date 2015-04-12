@@ -108,14 +108,16 @@ class ElementTestClassTemplate
 /**
  * This is an auto-generated test class, please do not modify.
  *
- * SourceClass: {$this->sourceClassName}
- * CreatedDate: {$now}
+ * @see {$this->sourceClassName}
+ * @created {$now}
 */
 class {$testClassName} extends \\PHPUnit_Framework_TestCase
 {
 PHP;
         $this->addConstructorDefinitionTest($classCode);
-        $this->addSinglePropertyGetterAndSetterTests($classCode);
+        $this->addGetterMethodsExistenceTest($classCode);
+        $this->addSinglePropertySetterMethodsExistenceTest($classCode);
+        $this->addCollectionPropertyAdderMethodsExistenceTests($classCode);
 
         return $classCode."\n}\n";
     }
@@ -245,35 +247,31 @@ PHP;
             'The following collection class properties are initialized incorrectly: ["'.implode('", "', array_keys(\$diff)).'"]');
 
 PHP;
-        $classCode .= "    }\n";
+        $classCode .= "    }\n\n";
     }
 
     /**
-     * TODO: This is pretty messy right now, clean it up.
-     *
      * @param string $classCode
      */
-    protected function addSinglePropertyGetterAndSetterTests(&$classCode)
+    protected function addGetterMethodsExistenceTest(&$classCode)
     {
-        if (0 < count($this->singleProperties))
+        $properties = array_merge(array_keys($this->singleProperties), array_keys($this->collectionProperties));
+
+        if (0 < count($properties))
         {
             $expectedGetters = array();
-            $expectedSetters = array();
 
-            foreach($this->singleProperties as $propertyName=>$property)
+            foreach($properties as $property)
             {
-                /** @var \ReflectionProperty $property */
-                $expectedGetters[$propertyName] = 'get'.ucfirst($propertyName);
-                $expectedSetters[$propertyName] = 'set'.ucfirst($propertyName);
+                $expectedGetters[$property] = 'get'.ucfirst($property);
             }
-
             $classCode .= "    /**\n";
             foreach($expectedGetters as $propertyName=>$getter)
             {
                 $classCode .= "     * @covers {$this->sourceClassName}::{$getter}\n";
             }
 
-            $classCode .= "     */\n    public function testSinglePropertyGetterMethodExistence()\n    {\n";
+            $classCode .= "     */\n    public function testPropertyGetterMethodsExistence()\n    {\n";
 
             foreach($expectedGetters as $propertyName=>$getter)
             {
@@ -285,25 +283,86 @@ PHP;
 PHP;
             }
 
-            $classCode .= "}\n\n    /**\n";
+            $classCode .= "    }\n\n";
+        }
+    }
+
+    /**
+     * TODO: This is pretty messy right now, clean it up.
+     *
+     * @param string $classCode
+     */
+    protected function addSinglePropertySetterMethodsExistenceTest(&$classCode)
+    {
+        if (0 < count($this->singleProperties))
+        {
+            $expectedSetters = array();
+
+            foreach(array_keys($this->singleProperties) as $propertyName)
+            {
+                /** @var \ReflectionProperty $property */
+                $expectedSetters[$propertyName] = 'set'.ucfirst($propertyName);
+            }
+
+            $classCode .= "    /**\n";
             foreach($expectedSetters as $propertyName=>$setter)
             {
                 $classCode .= "     * @covers {$this->sourceClassName}::{$setter}\n";
             }
 
-            $classCode .= "    */\n    public function testSinglePropertySetterMethodExistence()\n    {\n";
+            $classCode .= "    */\n    public function testSinglePropertySetterMethodsExistence()\n    {\n";
 
             foreach($expectedSetters as $propertyName=>$setter)
             {
                 $classCode .= <<<PHP
         \$this->assertTrue(
             method_exists('{$this->sourceClassName}', '{$setter}'),
-            'Property "{$propertyName}" does not have a valid setter method (expected existence of method named "{$setter}".');
+            'Property "{$propertyName}" does not have a valid setter method (expected existence of method named "{$setter}").');
 
 PHP;
             }
 
-            $classCode .= "}\n";
+            $classCode .= "    }\n";
+        }
+    }
+
+    /**
+     * TODO: This is pretty messy right now, clean it up.
+     *
+     * @param string $classCode
+     */
+    protected function addCollectionPropertyAdderMethodsExistenceTests(&$classCode)
+    {
+        if (0 < count($this->collectionProperties))
+        {
+            $expectedAdders = array();
+
+            foreach(array_keys($this->collectionProperties) as $propertyName)
+            {
+                /** @var \ReflectionProperty $property */
+                $expectedAdders[$propertyName] = 'add'.ucfirst($propertyName);
+            }
+
+            $classCode .= "    /**\n";
+            foreach($expectedAdders as $propertyName=>$adder)
+            {
+                $classCode .= "     * @covers {$this->sourceClassName}::{$adder}\n";
+            }
+
+            $classCode .= "    */\n    public function testCollectionPropertyAdderMethodsExistence()\n    {\n";
+
+            foreach($expectedAdders as $propertyName=>$adder)
+            {
+                $classCode .= <<<PHP
+        \$this->assertTrue(
+            method_exists('{$this->sourceClassName}', '{$adder}'),
+            'Property "{$propertyName}" does not have a valid adder method (expected existence of method named "{$adder}").');
+
+PHP;
+
+            }
+
+            $classCode .= "    }\n";
         }
     }
 }
