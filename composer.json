@@ -29,9 +29,6 @@
         }
     },
     "bin": [
-        "bin/generator",
-        "bin/phpunit.bat",
-        "bin/phpunit.sh",
-        "bin/phpunit.dist.xml"
+        "bin/component-test-generator"
     ]
 }
