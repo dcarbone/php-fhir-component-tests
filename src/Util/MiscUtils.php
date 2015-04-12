@@ -56,6 +56,8 @@ abstract class MiscUtils
     }
 
     /**
+     * TODO: Do a better job with this method...
+     *
      * @param mixed $var
      * @return string
      */
@@ -63,15 +65,16 @@ abstract class MiscUtils
     {
         ob_start();
         var_export($var);
-        return preg_replace(
-            array(
-                '{\t|\s{2,}}S',
-                '{\n}S'
-            ),
-            array(
-                '',
-                ' '
-            ),
-            ob_get_clean());
+        return ob_get_clean();
+//        return preg_replace(
+//            array(
+//                '{\t|\s{2,}}S',
+//                '{\n}S'
+//            ),
+//            array(
+//                '',
+//                ' '
+//            ),
+//            ob_get_clean());
     }
 }
