@@ -57,3 +57,6 @@ crashlytics-build.properties
 composer.lock
 
 tests/report
+
+tests/elements/*.php
+tests/resources/*.php

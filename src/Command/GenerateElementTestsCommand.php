@@ -43,6 +43,15 @@ class GenerateElementTestsCommand extends Command
             ->notName('Abstract*')
             ->notName('*Interface.php');
 
+        $outputDir = TEST_CLASS_DIR.'elements'.DIRECTORY_SEPARATOR;
+
+        if (!is_dir($outputDir))
+        {
+            $ok = @mkdir($outputDir);
+            if (!$ok)
+                throw new \RuntimeException('Could not create Elements test class output dir, please check permissions.');
+        }
+
         foreach($elementClassFiles as $classFile)
         {
             /** @var SplFileInfo $classFile */
@@ -50,9 +59,11 @@ class GenerateElementTestsCommand extends Command
             $classReflection = new \ReflectionClass($className);
 
             $template = new ElementTestClassTemplate($className, $classFile, $classReflection);
-            $output = $template->generateClassCode();
 
-            break;
+            file_put_contents(
+                $outputDir.$template->getTestClassName().'.php',
+                $template->generateClassCode()
+            );
         }
     }
 
