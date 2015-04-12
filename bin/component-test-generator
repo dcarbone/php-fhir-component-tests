@@ -8,5 +8,53 @@ else if (file_exists(__DIR__.'/../../../autoload.php'))
 else
     throw new \RuntimeException('Unable to determine location of composer autoload file.');
 
+
+
+if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/common/'))
+    define('FHIR_COMMON_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if (($dir = realpath(__DIR__.'/../../../../src/')) && file_exists($dir.'/FHIRObjectInterface.php'))
+    define('FHIR_COMMON_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if ($dir = realpath(__DIR__.'/../../common/'))
+    define('FHIR_COMMON_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else
+    throw new \RuntimeException('Unable to locate Common Lib dir.');
+
+if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/elements/'))
+    define('FHIR_ELEMENTS_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if (($dir = realpath(__DIR__.'/../../../../src/')) && file_exists($dir.'/FHIRElementInterface.php'))
+    define('FHIR_ELEMENTS_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if ($dir = realpath(__DIR__.'/../../elements/'))
+    define('FHIR_ELEMENTS_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else
+    throw new \RuntimeException('Unable to locate Elements Lib dir.');
+
+if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/resources/'))
+    define('FHIR_RESOURCES_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if (($dir = realpath(__DIR__.'/../../../../src/')) && file_exists($dir.'/FHIRResourceInterface.php'))
+    define('FHIR_RESOURCES_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if ($dir = realpath(__DIR__.'/../../resources/'))
+    define('FHIR_RESOURCES_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else
+    throw new \RuntimeException('Unable to locate Resources Lib dir.');
+
+if (!is_dir(FHIR_COMMON_LIB_DIR))
+    throw new \RuntimeException('Unable to locate Common Lib dir.');
+
+if (!is_dir(FHIR_ELEMENTS_LIB_DIR))
+
+    if (!is_dir(FHIR_RESOURCES_LIB_DIR))
+        throw new \RuntimeException('Unable to locate Resources lib dir.');
+
+define('FHIR_TEST_LIB_ROOT_DIR', realpath(__DIR__.'/../').DIRECTORY_SEPARATOR);
+define('FHIR_TEST_LIB_SRC_DIR', FHIR_TEST_LIB_ROOT_DIR.'src'.DIRECTORY_SEPARATOR);
+define('FHIR_TEST_LIB_TEST_CLASS_DIR', FHIR_TEST_LIB_ROOT_DIR.'tests'.DIRECTORY_SEPARATOR);
+
+if (!is_dir(FHIR_TEST_LIB_TEST_CLASS_DIR))
+{
+    $ok = @mkdir(FHIR_TEST_LIB_TEST_CLASS_DIR);
+    if (!$ok)
+        throw new \RuntimeException('Unable to create Test Class output directory, please check permissions.');
+}
+
 $application = new \FHIR\ComponentTests\Application();
 $application->run();

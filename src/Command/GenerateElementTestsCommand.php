@@ -36,7 +36,7 @@ class GenerateElementTestsCommand extends Command
         $finder = new Finder();
         $elementClassFiles = $finder
             ->files()
-            ->in(__DIR__.'/../../vendor/php-fhir/elements/')
+            ->in(FHIR_ELEMENTS_LIB_DIR)
             ->ignoreDotFiles(true)
             ->ignoreVCS(true)
             ->name('*.php')
