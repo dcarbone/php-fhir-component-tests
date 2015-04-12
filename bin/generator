@@ -1,18 +1,15 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+if (dirname(__DIR__) == 'vendor')
+    $vendor_dir = realpath(__DIR__.'/../');
+else
+    $vendor_dir = realpath(__DIR__.'/../vendor/');
 
-define('ROOT_DIR', realpath(__DIR__.'/../').DIRECTORY_SEPARATOR);
-define('SRC_DIR', ROOT_DIR.'src'.DIRECTORY_SEPARATOR);
-define('TEST_CLASS_DIR', ROOT_DIR.'tests'.DIRECTORY_SEPARATOR);
-
-if (!is_dir(TEST_CLASS_DIR))
-{
-    $ok = @mkdir(TEST_CLASS_DIR);
-    if (!$ok)
-        throw new \RuntimeException('Unable to create Test Class output directory, please check permissions.');
-}
+if (is_dir($vendor_dir) && file_exists($vendor_dir.'/autoload.php'))
+    require_once $vendor_dir.'/autoload.php';
+else
+    throw new \RuntimeException('Unable to determine location of composer autoload file.');
 
 $application = new \FHIR\ComponentTests\Application();
 $application->run();

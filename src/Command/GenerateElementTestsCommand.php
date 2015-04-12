@@ -43,7 +43,7 @@ class GenerateElementTestsCommand extends Command
             ->notName('Abstract*')
             ->notName('*Interface.php');
 
-        $outputDir = TEST_CLASS_DIR.'elements'.DIRECTORY_SEPARATOR;
+        $outputDir = FHIR_TEST_LIB_TEST_CLASS_DIR.'elements'.DIRECTORY_SEPARATOR;
 
         if (!is_dir($outputDir))
         {

@@ -1,5 +1,17 @@
 <?php namespace FHIR\ComponentTests;
 
+define('FHIR_TEST_LIB_ROOT_DIR', realpath(__DIR__.'/../').DIRECTORY_SEPARATOR);
+define('FHIR_TEST_LIB_SRC_DIR', FHIR_TEST_LIB_ROOT_DIR.'src'.DIRECTORY_SEPARATOR);
+define('FHIR_TEST_LIB_TEST_CLASS_DIR', FHIR_TEST_LIB_ROOT_DIR.'tests'.DIRECTORY_SEPARATOR);
+
+
+if (!is_dir(FHIR_TEST_LIB_TEST_CLASS_DIR))
+{
+    $ok = @mkdir(FHIR_TEST_LIB_TEST_CLASS_DIR);
+    if (!$ok)
+        throw new \RuntimeException('Unable to create Test Class output directory, please check permissions.');
+}
+
 use FHIR\ComponentTests\Command\GenerateElementTestsCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 

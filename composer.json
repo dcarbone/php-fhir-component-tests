@@ -15,7 +15,7 @@
         "phpunit/phpunit": "4.6.*",
         "symfony/console": "2.6.*",
         "symfony/finder": "2.6.*",
-        "phpdocumentor/reflection-docblock": "2.0.4",
+        "phpdocumentor/reflection-docblock": "2.0.*",
         "dcarbone/file-object-plus": "0.1.*"
     },
     "require-dev": {
@@ -27,5 +27,11 @@
         "psr-4": {
             "FHIR\\ComponentTests\\": "src/"
         }
-    }
+    },
+    "bin": [
+        "bin/generator",
+        "bin/phpunit.bat",
+        "bin/phpunit.sh",
+        "bin/phpunit.dist.xml"
+    ]
 }
