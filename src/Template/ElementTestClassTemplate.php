@@ -1,17 +1,5 @@
 <?php namespace FHIR\ComponentTests\Template;
 
-//{
-//
-//    $getter = 'get'.ucfirst($name);
-//    $setter = 'set'.ucfirst($name);
-//    $this->assertTrue(
-//        method_exists($className, $getter),
-//        'Property "'.$name.'" on class "'.$className.'" does not have a getter method.');
-//    $this->assertTrue(
-//        method_exists($className, $setter),
-//        'Property "'.$name.'" on class "'.$className.'" does not have a setter method.');
-//}
-
 use DCarbone\FileObjectPlus;
 use FHIR\ComponentTests\Util\MiscUtils;
 use phpDocumentor\Reflection\DocBlock;
@@ -127,6 +115,7 @@ class {$testClassName} extends \\PHPUnit_Framework_TestCase
 {
 PHP;
         $this->addConstructorDefinitionTest($classCode);
+        $this->addSinglePropertyGetterAndSetterTests($classCode);
 
         return $classCode."\n}\n";
     }
@@ -217,12 +206,11 @@ PHP;
 PHP;
         // TODO Maybe move this into the test class directly??
         $collectionPropertyClass = array();
-        foreach($this->collectionProperties as $propertyName=>$property)
+        foreach($this->collectionProperties as $propertyName=>$propertyReflection)
         {
-            /** @var \ReflectionProperty $property */
+            /** @var \ReflectionProperty $propertyReflection */
 
-            $name = $property->getName();
-            $docBlock = new DocBlock($property->getDocComment());
+            $docBlock = new DocBlock($propertyReflection->getDocComment());
             foreach($docBlock->getTags() as $tag)
             {
                 if ($tag instanceof VarTag)
@@ -232,7 +220,7 @@ PHP;
                     {
                         if (false !== strpos($class, 'Collection'))
                         {
-                            $collectionPropertyClass[$name] = $class;
+                            $collectionPropertyClass[$propertyName] = $class;
                             break;
                         }
                     }
@@ -257,6 +245,65 @@ PHP;
             'The following collection class properties are initialized incorrectly: ["'.implode('", "', array_keys(\$diff)).'"]');
 
 PHP;
-        $classCode .= "\t}\n";
+        $classCode .= "    }\n";
+    }
+
+    /**
+     * TODO: This is pretty messy right now, clean it up.
+     *
+     * @param string $classCode
+     */
+    protected function addSinglePropertyGetterAndSetterTests(&$classCode)
+    {
+        if (0 < count($this->singleProperties))
+        {
+            $expectedGetters = array();
+            $expectedSetters = array();
+
+            foreach($this->singleProperties as $propertyName=>$property)
+            {
+                /** @var \ReflectionProperty $property */
+                $expectedGetters[$propertyName] = 'get'.ucfirst($propertyName);
+                $expectedSetters[$propertyName] = 'set'.ucfirst($propertyName);
+            }
+
+            $classCode .= "    /**\n";
+            foreach($expectedGetters as $propertyName=>$getter)
+            {
+                $classCode .= "     * @covers {$this->sourceClassName}::{$getter}\n";
+            }
+
+            $classCode .= "     */\n    public function testSinglePropertyGetterMethodExistence()\n    {\n";
+
+            foreach($expectedGetters as $propertyName=>$getter)
+            {
+                $classCode .= <<<PHP
+        \$this->assertTrue(
+            method_exists('{$this->sourceClassName}', '{$getter}'),
+            'Property "{$propertyName}" does not have a valid getter method (expected existence of method named "{$getter}").');
+
+PHP;
+            }
+
+            $classCode .= "}\n\n    /**\n";
+            foreach($expectedSetters as $propertyName=>$setter)
+            {
+                $classCode .= "     * @covers {$this->sourceClassName}::{$setter}\n";
+            }
+
+            $classCode .= "    */\n    public function testSinglePropertySetterMethodExistence()\n    {\n";
+
+            foreach($expectedSetters as $propertyName=>$setter)
+            {
+                $classCode .= <<<PHP
+        \$this->assertTrue(
+            method_exists('{$this->sourceClassName}', '{$setter}'),
+            'Property "{$propertyName}" does not have a valid setter method (expected existence of method named "{$setter}".');
+
+PHP;
+            }
+
+            $classCode .= "}\n";
+        }
     }
 }

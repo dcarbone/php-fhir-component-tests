@@ -10,7 +10,7 @@ abstract class MiscUtils
 {
     /**
      * @param FileObjectPlus $fileObject
-     * @param strin g$sourceClassName
+     * @param string $sourceClassName
      * @param string $methodName
      * @param bool $asArray
      * @return array|string
