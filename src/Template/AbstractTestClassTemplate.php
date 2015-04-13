@@ -72,7 +72,41 @@ abstract class AbstractTestClassTemplate
     /**
      * @return string
      */
-    abstract public function generateClassCode();
+    public function generateClassCode()
+    {
+        $testClassName = $this->getTestClassName();
+        $now = date('Y-m-d H:i:s e');
+        $classCode = <<<PHP
+<?php
+
+use FHIR\ComponentTests\Util\ReflectionUtils;
+
+/**
+ * This is an auto-generated test class, please do not modify.
+ *
+ * @see {$this->sourceClassName}
+ * @created {$now}
+*/
+class {$testClassName} extends \\PHPUnit_Framework_TestCase
+{
+    /** @var \\ReflectionClass */
+    private \$sourceClass;
+
+    /**
+     * Test Setup
+     */
+    protected function setup()
+    {
+        \$this->sourceClass = new \\ReflectionClass('{$this->sourceClassName}');
+    }
+PHP;
+        $this->addConstructorDefinitionTest($classCode);
+        $this->addGetterMethodsExistenceTest($classCode);
+        $this->addSinglePropertySetterMethodsExistenceTest($classCode);
+        $this->addCollectionPropertyAdderMethodsExistenceTests($classCode);
+
+        return $classCode."\n}\n";
+    }
 
     /**
      * @return string
@@ -238,7 +272,7 @@ PHP;
             {
                 $classCode .= <<<PHP
         \$this->assertTrue(
-            method_exists('{$this->sourceClassName}', '{$getter}'),
+            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$getter}'),
             'Property "{$propertyName}" does not have a valid getter method (expected existence of method named "{$getter}").');
 
 PHP;
@@ -277,7 +311,7 @@ PHP;
             {
                 $classCode .= <<<PHP
         \$this->assertTrue(
-            method_exists('{$this->sourceClassName}', '{$setter}'),
+            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$setter}'),
             'Property "{$propertyName}" does not have a valid setter method (expected existence of method named "{$setter}").');
 
 PHP;
@@ -316,7 +350,7 @@ PHP;
             {
                 $classCode .= <<<PHP
         \$this->assertTrue(
-            method_exists('{$this->sourceClassName}', '{$adder}'),
+            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$adder}'),
             'Property "{$propertyName}" does not have a valid adder method (expected existence of method named "{$adder}").');
 
 PHP;
