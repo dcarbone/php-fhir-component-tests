@@ -127,7 +127,7 @@ PHP;
      */
     protected function addConstructorDefinitionTest(&$classCode)
     {
-        if (method_exists($this->sourceClassName, '__construct'))
+        if (MiscUtils::classImplementsMethod($this->sourceClass, '__construct'))
         {
             if ($this->anyParentHasConstructor())
                 $this->addParentConstructorCallTest($classCode);

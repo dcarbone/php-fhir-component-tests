@@ -9,6 +9,22 @@ use DCarbone\FileObjectPlus;
 abstract class MiscUtils
 {
     /**
+     * @param \ReflectionClass $class
+     * @param string $methodName
+     * @return bool
+     */
+    public static function classImplementsMethod(\ReflectionClass $class, $methodName)
+    {
+        if ($class->hasMethod($methodName))
+        {
+            $method = $class->getMethod($methodName);
+            return $method->getDeclaringClass()->getName() == $class->getName();
+        }
+
+        return false;
+    }
+
+    /**
      * @param FileObjectPlus $fileObject
      * @param string $sourceClassName
      * @param string $methodName

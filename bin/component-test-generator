@@ -9,8 +9,9 @@ else
     throw new \RuntimeException('Unable to determine location of composer autoload file.');
 
 
-
-if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/common/'))
+if ($dir = realpath(__DIR__.'/../vendor/php-fhir/common'))
+    define('FHIR_COMMON_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/common/'))
     define('FHIR_COMMON_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
 else if (($dir = realpath(__DIR__.'/../../../../src/')) && file_exists($dir.'/FHIRObjectInterface.php'))
     define('FHIR_COMMON_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
@@ -19,7 +20,9 @@ else if ($dir = realpath(__DIR__.'/../../common/'))
 else
     throw new \RuntimeException('Unable to locate Common Lib dir.');
 
-if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/elements/'))
+if ($dir = realpath(__DIR__.'/../vendor/php-fhir/elements'))
+    define('FHIR_ELEMENTS_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/elements/'))
     define('FHIR_ELEMENTS_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
 else if (($dir = realpath(__DIR__.'/../../../../src/')) && file_exists($dir.'/FHIRElementInterface.php'))
     define('FHIR_ELEMENTS_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
@@ -28,7 +31,9 @@ else if ($dir = realpath(__DIR__.'/../../elements/'))
 else
     throw new \RuntimeException('Unable to locate Elements Lib dir.');
 
-if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/resources/'))
+if ($dir = realpath(__DIR__.'/../vendor/php-fhir/resources'))
+    define('FHIR_RESOURCES_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
+else if ($dir = realpath(__DIR__.'/../../vendor/php-fhir/resources/'))
     define('FHIR_RESOURCES_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
 else if (($dir = realpath(__DIR__.'/../../../../src/')) && file_exists($dir.'/FHIRResourceInterface.php'))
     define('FHIR_RESOURCES_LIB_DIR', $dir.DIRECTORY_SEPARATOR);
