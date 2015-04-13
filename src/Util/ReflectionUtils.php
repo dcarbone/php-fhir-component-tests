@@ -3,10 +3,10 @@
 use DCarbone\FileObjectPlus;
 
 /**
- * Class MiscUtils
+ * Class ReflectionUtils
  * @package FHIR\ComponentTests\Util
  */
-abstract class MiscUtils
+abstract class ReflectionUtils
 {
     /**
      * @param \ReflectionClass $class
@@ -22,6 +22,29 @@ abstract class MiscUtils
         }
 
         return false;
+    }
+
+    /**
+     * @param \ReflectionClass $class
+     * @param string $methodName
+     * @return bool
+     */
+    public static function anyParentImplementsMethod(\ReflectionClass $class, $methodName)
+    {
+        $hasMethod = false;
+        $parent = $class->getParentClass();
+        while (!$hasMethod && $parent)
+        {
+            if ($parent->hasMethod($methodName))
+            {
+                $method = $parent->getMethod($methodName);
+                $hasMethod = ($method->getDeclaringClass()->getName() == $parent->getName());
+            }
+
+            $parent = $parent->getParentClass();
+        }
+
+        return $hasMethod;
     }
 
     /**
