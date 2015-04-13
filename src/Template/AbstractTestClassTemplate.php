@@ -99,11 +99,13 @@ class {$testClassName} extends \\PHPUnit_Framework_TestCase
     {
         \$this->sourceClass = new \\ReflectionClass('{$this->sourceClassName}');
     }
+
 PHP;
         $this->addConstructorDefinitionTest($classCode);
         $this->addGetterMethodsExistenceTest($classCode);
         $this->addSinglePropertySetterMethodsExistenceTest($classCode);
         $this->addCollectionPropertyAdderMethodsExistenceTests($classCode);
+        $this->addInitializationTest($classCode);
 
         return $classCode."\n}\n";
     }
@@ -242,7 +244,7 @@ PHP;
             'The following collection class properties are initialized incorrectly: ["'.implode('", "', array_keys(\$diff)).'"]');
 
 PHP;
-        $classCode .= "    }\n\n";
+        $classCode .= "    }\n";
     }
 
     /**
@@ -260,7 +262,7 @@ PHP;
             {
                 $expectedGetters[$property] = 'get'.ucfirst($property);
             }
-            $classCode .= "    /**\n";
+            $classCode .= "\n    /**\n";
             foreach($expectedGetters as $propertyName=>$getter)
             {
                 $classCode .= "     * @covers {$this->sourceClassName}::{$getter}\n";
@@ -278,7 +280,7 @@ PHP;
 PHP;
             }
 
-            $classCode .= "    }\n\n";
+            $classCode .= "    }\n";
         }
     }
 
@@ -299,13 +301,13 @@ PHP;
                 $expectedSetters[$propertyName] = 'set'.ucfirst($propertyName);
             }
 
-            $classCode .= "    /**\n";
+            $classCode .= "\n    /**\n";
             foreach($expectedSetters as $propertyName=>$setter)
             {
                 $classCode .= "     * @covers {$this->sourceClassName}::{$setter}\n";
             }
 
-            $classCode .= "    */\n    public function testSinglePropertySetterMethodsExistence()\n    {\n";
+            $classCode .= "     */\n    public function testSinglePropertySetterMethodsExistence()\n    {\n";
 
             foreach($expectedSetters as $propertyName=>$setter)
             {
@@ -338,13 +340,13 @@ PHP;
                 $expectedAdders[$propertyName] = 'add'.ucfirst($propertyName);
             }
 
-            $classCode .= "    /**\n";
+            $classCode .= "\n    /**\n";
             foreach($expectedAdders as $propertyName=>$adder)
             {
                 $classCode .= "     * @covers {$this->sourceClassName}::{$adder}\n";
             }
 
-            $classCode .= "    */\n    public function testCollectionPropertyAdderMethodsExistence()\n    {\n";
+            $classCode .= "     */\n    public function testCollectionPropertyAdderMethodsExistence()\n    {\n";
 
             foreach($expectedAdders as $propertyName=>$adder)
             {
@@ -359,5 +361,41 @@ PHP;
 
             $classCode .= "    }\n";
         }
+    }
+
+    /**
+     * @param string $classCode
+     */
+    protected function addInitializationTest(&$classCode)
+    {
+        if (ReflectionUtils::classImplementsMethod($this->sourceClass, '__construct'))
+            $constructorClass = $this->sourceClassName;
+        else if ($parent = ReflectionUtils::getParentThatImplementsMethod($this->sourceClass, '__construct'))
+            $constructorClass = '\\'.$parent->getName();
+        else
+            $constructorClass = null;
+
+        if ($constructorClass)
+            $coversBlock = '@covers '.$constructorClass.'::__construct';
+        else
+            $coversBlock = '';
+
+        $classCode .= <<<PHP
+
+    /**
+     * {$coversBlock}
+     * @return {$this->sourceClassName}
+     */
+    public function testCanInitializeObject()
+    {
+        \$object = new {$this->sourceClassName};
+
+        \$this->assertInstanceOf(
+            '{$this->sourceClassName}',
+            \$object);
+
+        return \$object;
+    }
+PHP;
     }
 }

@@ -27,24 +27,34 @@ abstract class ReflectionUtils
     /**
      * @param \ReflectionClass $class
      * @param string $methodName
-     * @return bool
+     * @return null|\ReflectionClass
      */
-    public static function anyParentImplementsMethod(\ReflectionClass $class, $methodName)
+    public static function getParentThatImplementsMethod(\ReflectionClass $class, $methodName)
     {
-        $hasMethod = false;
         $parent = $class->getParentClass();
-        while (!$hasMethod && $parent)
+        while ($parent)
         {
             if ($parent->hasMethod($methodName))
             {
                 $method = $parent->getMethod($methodName);
-                $hasMethod = ($method->getDeclaringClass()->getName() == $parent->getName());
+                if($method->getDeclaringClass()->getName() == $parent->getName())
+                    return $parent;
             }
 
             $parent = $parent->getParentClass();
         }
 
-        return $hasMethod;
+        return null;
+    }
+
+    /**
+     * @param \ReflectionClass $class
+     * @param string $methodName
+     * @return bool
+     */
+    public static function anyParentImplementsMethod(\ReflectionClass $class, $methodName)
+    {
+        return null !== static::getParentThatImplementsMethod($class, $methodName);
     }
 
     /**

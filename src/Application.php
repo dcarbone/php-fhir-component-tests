@@ -1,8 +1,7 @@
 <?php namespace FHIR\ComponentTests;
 
-
-
 use FHIR\ComponentTests\Command\GenerateElementTestsCommand;
+use FHIR\ComponentTests\Command\GenerateResourceTestsCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 
 /**
@@ -29,6 +28,7 @@ class Application extends BaseApplication
         $commands = parent::getDefaultCommands();
 
         $commands[] = new GenerateElementTestsCommand();
+        $commands[] = new GenerateResourceTestsCommand();
 
         return $commands;
     }
