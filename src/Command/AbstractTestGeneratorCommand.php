@@ -26,7 +26,7 @@ abstract class AbstractTestGeneratorCommand extends Command
     /**
      * @return string
      */
-    abstract protected function getTemplateClassName();
+    abstract protected function getGeneratorClassName();
 
     /**
      * @return string
@@ -59,7 +59,7 @@ abstract class AbstractTestGeneratorCommand extends Command
                 throw new \RuntimeException('Could not create test class output dir at location "'.$outputDir.'", please check permissions.');
         }
 
-        $templateClass = $this->getTemplateClassName();
+        $generatorClass = $this->getGeneratorClassName();
         $sourceClassNamespace = $this->getSourceClassBaseNamespace();
 
         $progressBar = new ProgressBar($output, count($sourceClassFiles));
@@ -71,12 +71,12 @@ abstract class AbstractTestGeneratorCommand extends Command
             $className = $sourceClassNamespace.str_replace(array('\\', 'src/', '/', '.php'), array('/', '', '\\', ''), $classFile->getRelativePathname());
             $classReflection = new \ReflectionClass($className);
 
-            /** @var \FHIR\ComponentTests\Template\AbstractTestClassTemplate $template */
-            $template = new $templateClass($className, $classFile, $classReflection);
+            /** @var \FHIR\ComponentTests\Generator\AbstractTestClassGenerator $generator */
+            $generator = new $generatorClass($className, $classFile, $classReflection);
 
             file_put_contents(
-                $outputDir.$template->getTestClassName().'.php',
-                $template->generateClassCode()
+                $outputDir.$generator->getTestClassName().'.php',
+                $generator->generateClassCode()
             );
 
             $progressBar->advance(1);

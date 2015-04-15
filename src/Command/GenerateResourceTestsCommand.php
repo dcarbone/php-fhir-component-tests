@@ -35,9 +35,9 @@ class GenerateResourceTestsCommand extends AbstractTestGeneratorCommand
     /**
      * @return string
      */
-    protected function getTemplateClassName()
+    protected function getGeneratorClassName()
     {
-        return '\\FHIR\\ComponentTests\\Template\\ResourceTestClassTemplate';
+        return '\\FHIR\\ComponentTests\\Generator\\ResourceTestClassGenerator';
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php namespace FHIR\ComponentTests\Util;
 
 use DCarbone\FileObjectPlus;
+use phpDocumentor\Reflection\DocBlock;
+use phpDocumentor\Reflection\DocBlock\Tag\VarTag;
 
 /**
  * Class ReflectionUtils
@@ -102,6 +104,28 @@ abstract class ReflectionUtils
         }
 
         throw new \RuntimeException('Could not get definition of method "'.$sourceClassName.'::'.$methodName.'".');
+    }
+
+    /**
+     * @param \ReflectionProperty $property
+     * @param bool $asArray
+     * @return null|string
+     */
+    public static function getClassFromPropertyDocBlock(\ReflectionProperty $property, $asArray = false)
+    {
+        $docBlock = new DocBlock($property->getDocComment());
+        foreach($docBlock->getTags() as $tag)
+        {
+            if ($tag instanceof VarTag)
+            {
+                if ($asArray)
+                    return explode('|', $tag->getContent());
+                else
+                    return $tag->getContent();
+            }
+        }
+
+        return null;
     }
 
     /**

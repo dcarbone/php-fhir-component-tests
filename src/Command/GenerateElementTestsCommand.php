@@ -35,9 +35,9 @@ class GenerateElementTestsCommand extends AbstractTestGeneratorCommand
     /**
      * @return string
      */
-    protected function getTemplateClassName()
+    protected function getGeneratorClassName()
     {
-        return '\\FHIR\\ComponentTests\\Template\\ElementTestClassTemplate';
+        return '\\FHIR\\ComponentTests\\Generator\\ElementTestClassGenerator';
     }
 
     /**
