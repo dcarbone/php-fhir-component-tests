@@ -176,13 +176,13 @@ abstract class AbstractTestClassGenerator
      */
     protected function addGetterMethodsExistsTest(&$classCode)
     {
-        $properties = array_merge(array_keys($this->singleProperties), array_keys($this->collectionProperties));
+        $propertyNames = array_merge(array_keys($this->singleProperties), array_keys($this->collectionProperties));
 
-        if (0 < count($properties))
+        if (0 < count($propertyNames))
         {
-            foreach($properties as $property)
+            foreach($propertyNames as $propertyName)
             {
-                $classCode .= $this->templateClass->getGetterMethodExistsTestCode($this->sourceClassName, $property);
+                $classCode .= $this->templateClass->getGetterMethodExistsTestCode($this->sourceClassName, $propertyName);
             }
         }
     }
