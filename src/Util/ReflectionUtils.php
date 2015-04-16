@@ -111,7 +111,7 @@ abstract class ReflectionUtils
      * @param bool $asArray
      * @return null|string
      */
-    public static function getClassFromPropertyDocBlock(\ReflectionProperty $property, $asArray = false)
+    public static function getClassesFromPropertyDocBlock(\ReflectionProperty $property, $asArray = false)
     {
         $docBlock = new DocBlock($property->getDocComment());
         foreach($docBlock->getTags() as $tag)

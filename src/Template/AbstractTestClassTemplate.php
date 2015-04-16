@@ -123,7 +123,110 @@ PHP;
             0,
             \$diff,
             'The following collection class properties are initialized incorrectly: ["'.implode('", "', array_keys(\$diff)).'"]');
+    }
 
+PHP;
+    }
+
+    /**
+     * @param string $sourceClassName
+     * @param string $propertyName
+     * @return string
+     */
+    public function getGetterMethodExistsTestCode($sourceClassName, $propertyName)
+    {
+        $getter = 'get'.ucfirst($propertyName);
+        $methodName = 'test'.ucfirst($getter).'MethodExists';
+        return <<<PHP
+
+    /**
+     * @covers {$sourceClassName}::{$getter}
+     */
+    public function {$methodName}()
+    {
+        \$this->assertTrue(
+            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$getter}'),
+            'Property "{$propertyName}" does not have a valid getter method (expected existence of method named "{$getter}").');
+    }
+
+PHP;
+    }
+
+    /**
+     * @param string $sourceClassName
+     * @param string $propertyName
+     * @return string
+     */
+    public function getSinglePropertySetterMethodExistsCode($sourceClassName, $propertyName)
+    {
+        $setter = 'set'.ucfirst($propertyName);
+        $methodName = 'test'.ucfirst($setter).'MethodExists';
+        return <<<PHP
+
+    /**
+     * @covers {$sourceClassName}::{$setter}
+     */
+    public function {$methodName}()
+    {
+        \$this->assertTrue(
+            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$setter}'),
+            'Property "{$propertyName}" does not have a valid setter method (expected existence of method named "{$setter}").');
+    }
+
+PHP;
+    }
+
+    /**
+     * @param string $sourceClassName
+     * @param string $propertyName
+     * @return string
+     */
+    public function getCollectionPropertyAdderMethodExistsCode($sourceClassName, $propertyName)
+    {
+        $adder = 'add'.ucfirst($propertyName);
+        $methodName = 'test'.ucfirst($adder).'MethodExists';
+        return <<<PHP
+
+    /**
+     * @covers {$sourceClassName}::{$adder}
+     */
+    public function {$methodName}()
+    {
+        \$this->assertTrue(
+            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$adder}'),
+            'Property "{$propertyName}" does not have a valid adder method (expected existence of method named "{$adder}").');
+    }
+
+PHP;
+    }
+
+    /**
+     * @param string $sourceClassName
+     * @param string|null $constructorClass
+     * @return string
+     */
+    public function getObjectInitializationTestCode($sourceClassName, $constructorClass = null)
+    {
+        if ($constructorClass)
+            $coversBlock = '@covers '.$constructorClass.'::__construct';
+        else
+            $coversBlock = '';
+
+        return <<<PHP
+
+    /**
+     * {$coversBlock}
+     * @return {$sourceClassName}
+     */
+    public function testCanInitializeObject()
+    {
+        \$object = new {$sourceClassName};
+
+        \$this->assertInstanceOf(
+            '{$sourceClassName}',
+            \$object);
+
+        return \$object;
     }
 
 PHP;

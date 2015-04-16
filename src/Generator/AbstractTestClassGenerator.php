@@ -90,9 +90,9 @@ abstract class AbstractTestClassGenerator
             $this->getTestClassName());
 
         $this->addConstructorDefinitionTest($classCode);
-        $this->addGetterMethodsExistenceTest($classCode);
-        $this->addSinglePropertySetterMethodsExistenceTest($classCode);
-        $this->addCollectionPropertyAdderMethodsExistenceTests($classCode);
+        $this->addGetterMethodsExistsTest($classCode);
+        $this->addSinglePropertySetterMethodsExistsTest($classCode);
+        $this->addCollectionPropertyAdderMethodsExistsTests($classCode);
         $this->addInitializationTest($classCode);
 
         return $classCode."\n}\n";
@@ -155,7 +155,7 @@ abstract class AbstractTestClassGenerator
         $collectionPropertyClasses = array();
         foreach($this->collectionProperties as $propertyName=>$propertyReflection)
         {
-            foreach(ReflectionUtils::getClassFromPropertyDocBlock($propertyReflection, true) as $class)
+            foreach(ReflectionUtils::getClassesFromPropertyDocBlock($propertyReflection, true) as $class)
             {
                 if (false !== strpos($class, 'Collection'))
                 {
@@ -174,76 +174,30 @@ abstract class AbstractTestClassGenerator
     /**
      * @param string $classCode
      */
-    protected function addGetterMethodsExistenceTest(&$classCode)
+    protected function addGetterMethodsExistsTest(&$classCode)
     {
         $properties = array_merge(array_keys($this->singleProperties), array_keys($this->collectionProperties));
 
         if (0 < count($properties))
         {
-            $expectedGetters = array();
-
             foreach($properties as $property)
             {
-                $expectedGetters[$property] = 'get'.ucfirst($property);
+                $classCode .= $this->templateClass->getGetterMethodExistsTestCode($this->sourceClassName, $property);
             }
-            $classCode .= "\n    /**\n";
-            foreach($expectedGetters as $propertyName=>$getter)
-            {
-                $classCode .= "     * @covers {$this->sourceClassName}::{$getter}\n";
-            }
-
-            $classCode .= "     */\n    public function testPropertyGetterMethodsExistence()\n    {\n";
-
-            foreach($expectedGetters as $propertyName=>$getter)
-            {
-                $classCode .= <<<PHP
-        \$this->assertTrue(
-            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$getter}'),
-            'Property "{$propertyName}" does not have a valid getter method (expected existence of method named "{$getter}").');
-
-PHP;
-            }
-
-            $classCode .= "    }\n";
         }
     }
 
     /**
-     * TODO: This is pretty messy right now, clean it up.
-     *
      * @param string $classCode
      */
-    protected function addSinglePropertySetterMethodsExistenceTest(&$classCode)
+    protected function addSinglePropertySetterMethodsExistsTest(&$classCode)
     {
         if (0 < count($this->singleProperties))
         {
-            $expectedSetters = array();
-
             foreach(array_keys($this->singleProperties) as $propertyName)
             {
-                /** @var \ReflectionProperty $property */
-                $expectedSetters[$propertyName] = 'set'.ucfirst($propertyName);
+                $classCode .= $this->templateClass->getSinglePropertySetterMethodExistsCode($this->sourceClassName, $propertyName);
             }
-
-            $classCode .= "\n    /**\n";
-            foreach($expectedSetters as $propertyName=>$setter)
-            {
-                $classCode .= "     * @covers {$this->sourceClassName}::{$setter}\n";
-            }
-
-            $classCode .= "     */\n    public function testSinglePropertySetterMethodsExistence()\n    {\n";
-
-            foreach($expectedSetters as $propertyName=>$setter)
-            {
-                $classCode .= <<<PHP
-        \$this->assertTrue(
-            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$setter}'),
-            'Property "{$propertyName}" does not have a valid setter method (expected existence of method named "{$setter}").');
-
-PHP;
-            }
-
-            $classCode .= "    }\n";
         }
     }
 
@@ -252,38 +206,14 @@ PHP;
      *
      * @param string $classCode
      */
-    protected function addCollectionPropertyAdderMethodsExistenceTests(&$classCode)
+    protected function addCollectionPropertyAdderMethodsExistsTests(&$classCode)
     {
         if (0 < count($this->collectionProperties))
         {
-            $expectedAdders = array();
-
             foreach(array_keys($this->collectionProperties) as $propertyName)
             {
-                /** @var \ReflectionProperty $property */
-                $expectedAdders[$propertyName] = 'add'.ucfirst($propertyName);
+                $classCode .= $this->templateClass->getCollectionPropertyAdderMethodExistsCode($this->sourceClassName, $propertyName);
             }
-
-            $classCode .= "\n    /**\n";
-            foreach($expectedAdders as $propertyName=>$adder)
-            {
-                $classCode .= "     * @covers {$this->sourceClassName}::{$adder}\n";
-            }
-
-            $classCode .= "     */\n    public function testCollectionPropertyAdderMethodsExistence()\n    {\n";
-
-            foreach($expectedAdders as $propertyName=>$adder)
-            {
-                $classCode .= <<<PHP
-        \$this->assertTrue(
-            ReflectionUtils::classImplementsMethod(\$this->sourceClass, '{$adder}'),
-            'Property "{$propertyName}" does not have a valid adder method (expected existence of method named "{$adder}").');
-
-PHP;
-
-            }
-
-            $classCode .= "    }\n";
         }
     }
 
@@ -299,27 +229,6 @@ PHP;
         else
             $constructorClass = null;
 
-        if ($constructorClass)
-            $coversBlock = '@covers '.$constructorClass.'::__construct';
-        else
-            $coversBlock = '';
-
-        $classCode .= <<<PHP
-
-    /**
-     * {$coversBlock}
-     * @return {$this->sourceClassName}
-     */
-    public function testCanInitializeObject()
-    {
-        \$object = new {$this->sourceClassName};
-
-        \$this->assertInstanceOf(
-            '{$this->sourceClassName}',
-            \$object);
-
-        return \$object;
-    }
-PHP;
+        $classCode .= $this->templateClass->getObjectInitializationTestCode($this->sourceClassName, $constructorClass);
     }
 }
