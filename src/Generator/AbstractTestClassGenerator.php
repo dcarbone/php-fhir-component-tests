@@ -1,7 +1,7 @@
 <?php namespace FHIR\ComponentTests\Generator;
 
 use DCarbone\FileObjectPlus;
-use FHIR\ComponentTests\Util\ReflectionUtils;
+use FHIR\Utilities\ReflectionUtils;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlock\Tag\VarTag;
 use Symfony\Component\Finder\SplFileInfo;

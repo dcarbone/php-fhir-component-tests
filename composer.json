@@ -16,7 +16,8 @@
         "symfony/console": "2.6.*",
         "symfony/finder": "2.6.*",
         "phpdocumentor/reflection-docblock": "2.0.*",
-        "dcarbone/file-object-plus": "0.1.*"
+        "dcarbone/file-object-plus": "0.1.*",
+        "php-fhir/utilities": "1.0.*"
     },
     "require-dev": {
         "php-fhir/common": "*",

@@ -52,18 +52,13 @@ abstract class AbstractTestGeneratorCommand extends Command
 
         $outputDir = $this->getTestClassOutputDir();
 
-        if (!is_dir($outputDir))
-        {
-            $ok = @mkdir($outputDir);
-            if (!$ok)
-                throw new \RuntimeException('Could not create test class output dir at location "'.$outputDir.'", please check permissions.');
-        }
+        if (!is_dir($outputDir) && !(bool)@mkdir($outputDir))
+            throw new \RuntimeException('Could not create test class output dir at location "'.$outputDir.'", please check permissions.');
 
         $generatorClass = $this->getGeneratorClassName();
         $sourceClassNamespace = $this->getSourceClassBaseNamespace();
 
         $progressBar = new ProgressBar($output, count($sourceClassFiles));
-
 
         foreach($sourceClassFiles as $classFile)
         {
@@ -83,6 +78,9 @@ abstract class AbstractTestGeneratorCommand extends Command
         }
 
         $progressBar->finish();
-    }
 
+        $output->writeln('Test class generation completed.');
+
+        return 1;
+    }
 }

@@ -1,6 +1,6 @@
 <?php namespace FHIR\ComponentTests\Template;
 
-use FHIR\ComponentTests\Util\ReflectionUtils;
+use FHIR\Utilities\ReflectionUtils;
 use phpDocumentor\Reflection\DocBlock;
 
 /**
@@ -20,7 +20,7 @@ abstract class AbstractTestClassTemplate
         return <<<PHP
 <?php
 
-use FHIR\ComponentTests\Util\ReflectionUtils;
+use FHIR\Utilities\ReflectionUtils;
 
 /**
  * This is an auto-generated test class, please do not modify.
