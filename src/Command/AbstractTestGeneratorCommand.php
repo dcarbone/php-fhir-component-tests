@@ -79,7 +79,7 @@ abstract class AbstractTestGeneratorCommand extends Command
 
         $progressBar->finish();
 
-        $output->writeln('Test class generation completed.');
+        $output->writeln("\n\n".'Test class generation completed.');
 
         return 1;
     }
